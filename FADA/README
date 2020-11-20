@@ -1,0 +1,18 @@
+This FADA folder includes three experiments:
+
+1. FADA_digits:
+This file include experiments on MNIST and SVHN.
+Both MNIST and SVHN can be the source and the target data.
+To run the experiment, make sure to:
+    1) Set "M2S" as True for MNIST being the source, SVHN being the target. Change to False otherwise.
+    2) Set "batch_size", "num_samples" and batch sizes accordingly
+
+2. FADA_domainnet:
+This file include experiments on DomainNet
+To run the experiments:
+    1) change the source and target file path to the local file path
+    2) set "batch_size" and batch sizes accordingly
+    3) use "python FADA_domainnet.py --n_classes N", where N is the number of data for the target set. N is default to be 7.
+
+3. FADA_extension:
+This is an extension idea on FADA, it's build on digital dataset, but did not reach a good performance.
