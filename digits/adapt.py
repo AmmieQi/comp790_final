@@ -109,7 +109,7 @@ if __name__ == '__main__':
     parser.add_argument("--lr", type = float, default = 0.0003)
     parser.add_argument("--K", type = int, default = 7)
     parser.add_argument('--batch_size', type=int, default=16)
-    parser.add_argument("--iters", type = int, default = 10000)
+    parser.add_argument("--iters", type = int, default = 1000000)
     parser.add_argument("--num_workers", type = int, default = 16)
     #training helpers
     args = parser.parse_args()
@@ -131,10 +131,16 @@ if __name__ == '__main__':
     style_discrim = models.Style_Discrim(84)
     content_discrim = models.Content_Discrim(84)
 
-    args.style_discriminator_loss = .15
-    args.content_discriminator_loss = .15
-    args.style_generator_loss = .15
-    args.content_generator_loss =  .15
+    args.style_discriminator_loss = .2
+    args.content_discriminator_loss = .1
+    args.style_generator_loss = .2
+    args.content_generator_loss =  .1
+
+    # args.style_discriminator_loss = 1
+    # args.content_discriminator_loss = 1
+    # args.style_generator_loss = 1
+    # args.content_generator_loss =  1
+
     args.cls_loss = 1.0
 
     print (args)
@@ -227,7 +233,7 @@ if __name__ == '__main__':
                                transforms.ToTensor(),
                                transforms.Normalize((0.5), (0.5)),
                            ]),
-                           n_samples =args.K
+                           n_samples = args.K
                            )
         target_data_val = custom_dataloaders.SVHN('/app/fsl_da/data/SVHN', split='test', download=False,
                            transform=transforms.Compose([
@@ -265,11 +271,18 @@ if __name__ == '__main__':
 
     print (len(source_data_train), len(target_data_train), len(source_data_val), len(target_data_val))
 
-    source_data_train_dl = DataLoader(source_data_train, batch_size = args.batch_size, shuffle = True, drop_last = True)
-    target_data_train_dl = DataLoader(target_data_train, batch_size = args.batch_size, shuffle = True, drop_last = True)
+    source_data_train_dl = DataLoader(source_data_train,
+            batch_size = args.batch_size, shuffle = True,
+            drop_last = True, num_workers = args.num_workers)
 
-    source_data_val_dl = DataLoader(source_data_val, batch_size = 256, shuffle = False, drop_last = False)
-    target_data_val_dl = DataLoader(target_data_val, batch_size = 256, shuffle = False, drop_last = False)
+    target_data_train_dl = DataLoader(target_data_train,
+            batch_size = args.batch_size, shuffle = True,
+            drop_last = True, num_workers = args.num_workers)
+
+    source_data_val_dl = DataLoader(source_data_val, batch_size = 256,
+            shuffle = False, drop_last = False, num_workers = args.num_workers)
+    target_data_val_dl = DataLoader(target_data_val, batch_size = 256,
+            shuffle = False, drop_last = False, num_workers = args.num_workers)
 
     source_train_cycle = cycle(source_data_train_dl)
     target_train_cycle = cycle(target_data_train_dl)

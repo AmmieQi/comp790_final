@@ -2,6 +2,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+
 class Encoder(nn.Module):
 
     def __init__(self):
@@ -18,7 +21,6 @@ class Encoder(nn.Module):
     def forward(self,input):
 
         out = self.conv1(input)
-
         out = self.gn1(out)
         out=F.relu(out)
         out=F.max_pool2d(out,2)
@@ -180,9 +182,13 @@ def calc_mean_std(feat, eps=1e-5):
     return feat_mean, feat_std
 
 
-def adaptive_instance_normalization(content_feat, style_feat):
+def adaptive_instance_normalization(content_feat, style_feat, mean = 0, std = 1 ):
     assert (content_feat.size()[:2] == style_feat.size()[:2])
     size = content_feat.size()
+
+    # noise = torch.randn(style_feat.size()) * std + mean
+    # noise = noise.to(device)
+    # style_feat = style_feat + noise
     style_mean, style_std = calc_mean_std(style_feat)
 
     content_mean, content_std = calc_mean_std(content_feat)
@@ -201,6 +207,8 @@ class Fusion(nn.Module):
         super(Fusion, self).__init__()
 
         self.film = nn.Linear(in_channels, in_channels*2)
+        self.style_0_in = nn.LayerNorm(in_channels)
+        self.style_1_in = nn.LayerNorm(in_channels)
 
 
 
@@ -212,16 +220,10 @@ class Fusion(nn.Module):
         # out = gamma * content + beta
 
         # out = style + content
-        # style = torch.max(style, dim = 1)[0]
-        # style = torch.unsqueeze(style, dim = 1)
-        # out = torch.cat([style, content], dim = 1)
-
-        out = adaptive_instance_normalization(content, style)
-
-
         # if style_num == 0:
-        #     out = self.norm_1(out)
+        #     out = self.style_0_in(out)
         # else:
-        #     out = self.norm_2(out)
+        #     out = self.style_1_in(out)
+        out = adaptive_instance_normalization(content, style)
 
         return out

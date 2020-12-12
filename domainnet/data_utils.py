@@ -6,7 +6,6 @@ from torchvision import transforms
 import random
 from PIL import Image
 
-random.seed(0)
 
 
 class DomainNetDataset(Dataset):
@@ -58,8 +57,8 @@ def split_data(data_path, split_im_list, K = None):
             line = line.strip('\n')
             line = line.split(' ')
             im_fp, class_id = line
-            if int(class_id) > 49:
-                continue
+            # if int(class_id) > 49:
+            #     continue
             class_name = im_fp.split('/')[1]
             if not class_name in class_id_dict:
                 class_id_dict[class_name] = int(class_id)
@@ -70,8 +69,8 @@ def split_data(data_path, split_im_list, K = None):
             line = line.split(' ')
             im_fp, class_id = line
 
-            if int(class_id) > 49:
-                continue
+            # if int(class_id) > 49:
+            #     continue
 
             images_to_keep.append(im_fp)
 

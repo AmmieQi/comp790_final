@@ -82,7 +82,7 @@ if __name__ == '__main__':
 
     encoder = torchvision.models.resnet101(pretrained=True)
     encoder.fc = Identity()
-    classifier = torch.nn.Linear(2048, 50)
+    classifier = torch.nn.Linear(2048, 350)
 
 
     encoder = torch.nn.DataParallel(encoder)
@@ -112,7 +112,7 @@ if __name__ == '__main__':
     print (len(target_data_train), len(target_data_val))
 
     data_train = DataLoader(target_data_train, batch_size = args.batch_size, shuffle = True, drop_last = True)
-    data_val = DataLoader(target_data_val, batch_size = 128, shuffle = False, drop_last = False, num_workers = args.num_workers)
+    data_val = DataLoader(target_data_val, batch_size = args.batch_size, shuffle = False, drop_last = False, num_workers = args.num_workers)
 
     best_accuracy = -1
     for epoch_iter in range(args.num_epochs):

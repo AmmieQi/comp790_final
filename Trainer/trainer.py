@@ -84,9 +84,11 @@ class Trainer(object):
         self.targetStyle_targetContent = self.fusion(self.target_style, self.target_content, 1)
 
     def backward_Style_G(self):
+
         """
         Calculate loss for content encoder
         """
+
         #Source
         pred_source = self.style_discrim(self.source_content)
         loss_G_source = self.binary_criterion(pred_source, self.target_style_labels)
@@ -147,8 +149,7 @@ class Trainer(object):
     def backward_Content_D(self):
 
         """
-        Calculate entropy loss for content discriminator
-            The input to the content discriminator is the style encodings
+
         """
         #Source
         pred_source = self.content_discrim(self.source_style.detach())
@@ -180,6 +181,7 @@ class Trainer(object):
         targetStyle_targetContent_preds = self.cls_criterion(self.targetStyle_targetContent_preds, self.target_labels)
 
         cls_loss = (sourceStyle_sourceContent_preds + sourceStyle_targetContent_preds + targetStyle_sourceContent_preds + targetStyle_targetContent_preds) / 4.
+        # cls_loss = (sourceStyle_sourceContent_preds + targetStyle_sourceContent_preds ) / 2.
         cls_loss *= self.loss_weights.cls_loss
         cls_loss.backward()
 
